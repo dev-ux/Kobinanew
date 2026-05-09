@@ -52,6 +52,19 @@ export async function markContactRead(id) {
   if (error) throw error;
 }
 
+export async function uploadPostImage(file) {
+  const ext = file.name.split('.').pop().toLowerCase();
+  const filename = `posts/${Date.now()}.${ext}`;
+  const { data, error } = await supabase.storage
+    .from('blog-images')
+    .upload(filename, file, { upsert: true, contentType: file.type });
+  if (error) throw error;
+  const { data: { publicUrl } } = supabase.storage
+    .from('blog-images')
+    .getPublicUrl(data.path);
+  return publicUrl;
+}
+
 export async function getDashboardStats() {
   const [postsRes, contactsRes] = await Promise.all([
     supabase.from('posts').select('id, published'),

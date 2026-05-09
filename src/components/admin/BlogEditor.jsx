@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ArrowLeft, Save, Loader2 } from 'lucide-react';
-import { getAdminPosts, createPost, updatePost } from '../../lib/adminApi';
+import { ArrowLeft, Save, Loader2, UploadCloud, X, ImageIcon } from 'lucide-react';
+import { getAdminPosts, createPost, updatePost, uploadPostImage } from '../../lib/adminApi';
 
 const CATEGORIES = ['Développement', 'Architecture', 'IA', 'Mobile', 'Cloud', 'Design', 'Business'];
 
@@ -25,6 +25,9 @@ export default function BlogEditor() {
   const [loading, setLoading] = useState(isEdit);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
+  const [uploading, setUploading] = useState(false);
+  const [uploadError, setUploadError] = useState('');
+  const fileInputRef = useRef(null);
 
   useEffect(() => {
     if (!isEdit) return;
@@ -39,6 +42,23 @@ export default function BlogEditor() {
 
   const set = (field) => (e) =>
     setForm((prev) => ({ ...prev, [field]: e.target.value }));
+
+  const handleImageFile = async (file) => {
+    if (file.size > 5 * 1024 * 1024) {
+      setUploadError('Fichier trop lourd (max 5 Mo).');
+      return;
+    }
+    setUploadError('');
+    setUploading(true);
+    try {
+      const url = await uploadPostImage(file);
+      setForm((prev) => ({ ...prev, image: url }));
+    } catch (err) {
+      setUploadError(err.message || 'Échec de l\'upload.');
+    } finally {
+      setUploading(false);
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -175,23 +195,74 @@ export default function BlogEditor() {
           </div>
         </div>
 
-        {/* Image URL */}
+        {/* Image upload */}
         <div>
-          <label className="block text-sm text-gray-400 mb-1.5">URL de l'image</label>
+          <label className="block text-sm text-gray-400 mb-1.5">Image de couverture</label>
+
+          {/* Drop zone */}
+          <div
+            onClick={() => fileInputRef.current?.click()}
+            onDragOver={(e) => e.preventDefault()}
+            onDrop={(e) => {
+              e.preventDefault();
+              const file = e.dataTransfer.files[0];
+              if (file) handleImageFile(file);
+            }}
+            className="relative flex flex-col items-center justify-center gap-2 w-full h-36 border-2 border-dashed border-white/10 rounded-xl cursor-pointer hover:border-blue-500/50 hover:bg-white/3 transition-colors"
+          >
+            {uploading ? (
+              <>
+                <Loader2 className="w-6 h-6 text-blue-400 animate-spin" />
+                <span className="text-sm text-gray-400">Upload en cours...</span>
+              </>
+            ) : form.image ? (
+              <>
+                <img
+                  src={form.image}
+                  alt="preview"
+                  className="absolute inset-0 w-full h-full object-cover rounded-xl"
+                />
+                <div className="absolute inset-0 bg-black/50 rounded-xl flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
+                  <span className="text-white text-sm font-medium flex items-center gap-2">
+                    <UploadCloud className="w-4 h-4" /> Changer l'image
+                  </span>
+                </div>
+              </>
+            ) : (
+              <>
+                <ImageIcon className="w-8 h-8 text-gray-600" />
+                <span className="text-sm text-gray-400">Cliquer ou glisser une image</span>
+                <span className="text-xs text-gray-600">JPG, PNG, WebP — max 5 Mo</span>
+              </>
+            )}
+          </div>
+
           <input
-            value={form.image}
-            onChange={set('image')}
-            type="url"
-            className="w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 text-sm focus:outline-none focus:border-blue-500 transition-colors"
-            placeholder="https://..."
+            ref={fileInputRef}
+            type="file"
+            accept="image/jpeg,image/png,image/webp,image/gif"
+            className="hidden"
+            onChange={(e) => {
+              const file = e.target.files[0];
+              if (file) handleImageFile(file);
+              e.target.value = '';
+            }}
           />
-          {form.image && (
-            <img
-              src={form.image}
-              alt="preview"
-              className="mt-2 h-32 w-full object-cover rounded-lg border border-white/10"
-              onError={(e) => { e.target.style.display = 'none'; }}
-            />
+
+          {uploadError && (
+            <p className="mt-1.5 text-xs text-red-400 flex items-center gap-1">
+              <X className="w-3 h-3" /> {uploadError}
+            </p>
+          )}
+
+          {form.image && !uploading && (
+            <button
+              type="button"
+              onClick={() => setForm((prev) => ({ ...prev, image: '' }))}
+              className="mt-2 text-xs text-gray-500 hover:text-red-400 flex items-center gap-1 transition-colors"
+            >
+              <X className="w-3 h-3" /> Supprimer l'image
+            </button>
           )}
         </div>
 

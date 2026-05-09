@@ -1,7 +1,14 @@
 import React from 'react';
 import { ArrowLeft, Calendar, Clock, User, Tag } from 'lucide-react';
-
+import { format } from 'date-fns';
+import { fr } from 'date-fns/locale';
 import './BlogDetail.css';
+
+const formatDate = (val) => {
+  if (!val) return '';
+  try { return format(new Date(val), 'd MMM yyyy', { locale: fr }); }
+  catch { return val; }
+};
 
 const BlogDetail = ({ post, onBack }) => {
   const articleContent = post.content
@@ -42,11 +49,11 @@ const BlogDetail = ({ post, onBack }) => {
                 </div>
                 <div className="flex items-center gap-2">
                   <Calendar className="w-4 h-4" />
-                  {post.date}
+                  {formatDate(post.created_at)}
                 </div>
                 <div className="flex items-center gap-2">
                   <Clock className="w-4 h-4" />
-                  {post.readTime}
+                  {post.read_time}
                 </div>
                 <div className="flex items-center gap-2">
                   <Tag className="w-4 h-4" />

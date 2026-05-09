@@ -4,6 +4,14 @@ import { Button } from './ui/button';
 import BlogDetail from './BlogDetail';
 import useInView from '../hooks/useInView';
 import { getPosts } from '../lib/api';
+import { format } from 'date-fns';
+import { fr } from 'date-fns/locale';
+
+const formatDate = (val) => {
+  if (!val) return '';
+  try { return format(new Date(val), 'd MMM yyyy', { locale: fr }); }
+  catch { return val; }
+};
 
 const STATIC_POSTS = [
   {
@@ -12,6 +20,7 @@ const STATIC_POSTS = [
     excerpt: "Découvrez les dernières innovations et technologies qui transforment le paysage du développement web cette année.",
     author: "Thomas Petit",
     created_at: "2026-01-10",
+    read_time: "5 min",
     category: "Développement",
     image: "https://tunisie-innovation.tn/uploads/images/1733648239_nouveautes-marche-developpement-preparer-2025.jpeg"
   },
@@ -21,6 +30,7 @@ const STATIC_POSTS = [
     excerpt: "Un guide complet pour sélectionner les bonnes technologies adaptées à votre projet et votre équipe.",
     author: "Jean Martin",
     created_at: "2025-12-23",
+    read_time: "7 min",
     category: "Architecture",
     image: "https://media.licdn.com/dms/image/v2/D4E12AQGVY03EZ8F2IQ/article-cover_image-shrink_720_1280/article-cover_image-shrink_720_1280/0/1695727161208?e=2147483647&v=beta&t=eqZ7hkH2NrnDy7ErmbaVi4vDJYvMW44Mh0P3YX2n6bg"
   },
@@ -30,6 +40,7 @@ const STATIC_POSTS = [
     excerpt: "Explorez comment l'intelligence artificielle révolutionne les méthodes de développement moderne.",
     author: "Marie Dupont",
     created_at: "2026-01-05",
+    read_time: "6 min",
     category: "IA",
     image: "https://www.essca-alumni.com/ressources/temp/images/100_851_10937705009x525_33992583436_2702898811_2024114240-1726047756-art-developpement-durable-ia-potentiel-entreprises-glavas.webp"
   },
@@ -39,6 +50,7 @@ const STATIC_POSTS = [
     excerpt: "Les bonnes pratiques à suivre pour créer des applications mobiles performantes et intuitives.",
     author: "Sophie Bernard",
     created_at: "2025-09-28",
+    read_time: "8 min",
     category: "Mobile",
     image: "https://cdn.kellton.com/design-studio-s3/s3fs-public/2024-07/Mobile%20App%20Design%20Best%20Practices.jpg"
   },
@@ -48,6 +60,7 @@ const STATIC_POSTS = [
     excerpt: "Comprendre les principes du Cloud Native et pourquoi c'est essentiel pour les applications modernes.",
     author: "Jean Martin",
     created_at: "2026-02-04",
+    read_time: "6 min",
     category: "Cloud",
     image: "https://cdn.prod.website-files.com/654ac8098482d38e23dbd331/654ac8098482d38e23dbd4c3_TdTX1ESooa5nISnxd26vcQoSxB3O8vNAWehVvXiW0NM.jpeg"
   },
@@ -57,6 +70,7 @@ const STATIC_POSTS = [
     excerpt: "Les principes essentiels de design UX/UI pour créer des expériences utilisateur mémorables.",
     author: "Sophie Bernard",
     created_at: "2026-02-07",
+    read_time: "5 min",
     category: "Design",
     image: "https://media.licdn.com/dms/image/v2/D5612AQFvtFCZ9u3xyA/article-cover_image-shrink_600_2000/article-cover_image-shrink_600_2000/0/1720177347124?e=2147483647&v=beta&t=2LF2rhm1tbomyrVkVrdQ5hzWlxoKfcVxoPR99NYoZCM"
   }
@@ -69,8 +83,12 @@ const Blog = () => {
 
   useEffect(() => {
     getPosts()
-      .then((data) => { if (data && data.length > 0) setPosts(data); })
-      .catch(() => {})
+      .then((data) => {
+        if (Array.isArray(data) && data.length > 0) {
+          setPosts(data);
+        }
+      })
+      .catch((err) => console.error('[Blog] Erreur chargement articles:', err))
       .finally(() => setLoading(false));
   }, []);
 
@@ -170,11 +188,11 @@ const Blog = () => {
                   </div>
                   <div className="flex items-center gap-2">
                     <Calendar className="h-4 w-4" />
-                    {posts[0].date}
+                    {formatDate(posts[0].created_at)}
                   </div>
                   <div className="flex items-center gap-2">
                     <Clock className="h-4 w-4" />
-                    {posts[0].readTime}
+                    {posts[0].read_time}
                   </div>
                 </div>
                 <Button 
@@ -224,13 +242,13 @@ const Blog = () => {
                     </div>
                     <div className="flex items-center gap-2">
                       <Clock className="h-4 w-4" />
-                      {post.readTime}
+                      {post.read_time}
                     </div>
                   </div>
                   <div className="mt-4 pt-4 border-t border-white/10">
                     <div className="flex items-center gap-2 text-sm text-gray-400">
                       <Calendar className="h-4 w-4" />
-                      {post.date}
+                      {formatDate(post.created_at)}
                     </div>
                   </div>
                 </div>

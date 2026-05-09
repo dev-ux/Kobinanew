@@ -19,7 +19,7 @@ export default function AdminLogin() {
     const { error: err } = await signIn(email, password);
     setLoading(false);
     if (err) {
-      setError('Email ou mot de passe incorrect.');
+      setError(err.message || 'Email ou mot de passe incorrect.');
     } else {
       navigate('/admin');
     }

@@ -80,6 +80,8 @@ const Blog = () => {
   const [selectedPost, setSelectedPost] = useState(null);
   const [posts, setPosts] = useState(STATIC_POSTS);
   const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState('');
+  const [activeCategory, setActiveCategory] = useState('Tous');
 
   useEffect(() => {
     getPosts()
@@ -93,6 +95,16 @@ const Blog = () => {
   }, []);
 
   const categories = ["Tous", "Développement", "Architecture", "IA", "Mobile", "Cloud", "Design"];
+
+  const filteredPosts = posts.filter((post) => {
+    const matchCategory = activeCategory === 'Tous' || post.category === activeCategory;
+    const q = search.toLowerCase();
+    const matchSearch = !q || [post.title, post.excerpt, post.author, post.category]
+      .some((f) => f && f.toLowerCase().includes(q));
+    return matchCategory && matchSearch;
+  });
+
+  const isFiltering = search.trim() !== '' || activeCategory !== 'Tous';
 
   const [headerRef, headerInView] = useInView(0.1);
   const [gridRef, gridInView] = useInView(0.05);
@@ -147,17 +159,20 @@ const Blog = () => {
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
               <input
                 type="text"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
                 placeholder="Rechercher un article..."
                 className="w-full pl-10 pr-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-blue-400 transition-colors"
               />
             </div>
             <div className="flex gap-2 flex-wrap">
-              {categories.map((category, index) => (
+              {categories.map((category) => (
                 <button
-                  key={index}
+                  key={category}
+                  onClick={() => setActiveCategory(category)}
                   className={`px-4 py-2 rounded-lg border transition-colors ${
-                    index === 0 
-                      ? 'bg-blue-500 text-white border-blue-500' 
+                    activeCategory === category
+                      ? 'bg-blue-500 text-white border-blue-500'
                       : 'bg-white/5 text-gray-300 border-white/10 hover:bg-white/10'
                   }`}
                 >
@@ -167,7 +182,21 @@ const Blog = () => {
             </div>
           </div>
 
-          {/* Featured Post */}
+          {/* No results */}
+          {filteredPosts.length === 0 && (
+            <div className="text-center py-20">
+              <p className="text-gray-400 text-lg">Aucun article trouvé.</p>
+              <button
+                onClick={() => { setSearch(''); setActiveCategory('Tous'); }}
+                className="mt-4 text-blue-400 text-sm hover:underline"
+              >
+                Réinitialiser les filtres
+              </button>
+            </div>
+          )}
+
+          {/* Featured Post — caché pendant une recherche ou si aucun résultat */}
+          {filteredPosts.length > 0 && !isFiltering && (
           <div className="bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-2xl border border-white/10 p-8 mb-12">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
               <div>
@@ -195,7 +224,7 @@ const Blog = () => {
                     {posts[0].read_time}
                   </div>
                 </div>
-                <Button 
+                <Button
                   className="bg-white text-black hover:bg-gray-100 rounded-full"
                   onClick={() => setSelectedPost(posts[0])}
                 >
@@ -207,10 +236,11 @@ const Blog = () => {
               </div>
             </div>
           </div>
+          )}
 
           {/* Blog Grid */}
           <div ref={gridRef} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {posts.slice(1).map((post, index) => (
+            {(isFiltering ? filteredPosts : filteredPosts.slice(1)).map((post, index) => (
               <article
                 key={post.id}
                 className="bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 overflow-hidden hover:bg-white/10 transition-all duration-300 group cursor-pointer"

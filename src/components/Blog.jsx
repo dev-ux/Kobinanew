@@ -1,73 +1,78 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ArrowLeft, Calendar, Clock, User, Tag, Search } from 'lucide-react';
 import { Button } from './ui/button';
 import BlogDetail from './BlogDetail';
 import useInView from '../hooks/useInView';
+import { getPosts } from '../lib/api';
+
+const STATIC_POSTS = [
+  {
+    id: 1,
+    title: "Les tendances du développement web en 2025",
+    excerpt: "Découvrez les dernières innovations et technologies qui transforment le paysage du développement web cette année.",
+    author: "Thomas Petit",
+    created_at: "2026-01-10",
+    category: "Développement",
+    image: "https://tunisie-innovation.tn/uploads/images/1733648239_nouveautes-marche-developpement-preparer-2025.jpeg"
+  },
+  {
+    id: 2,
+    title: "Comment choisir sa stack technologique",
+    excerpt: "Un guide complet pour sélectionner les bonnes technologies adaptées à votre projet et votre équipe.",
+    author: "Jean Martin",
+    created_at: "2025-12-23",
+    category: "Architecture",
+    image: "https://media.licdn.com/dms/image/v2/D4E12AQGVY03EZ8F2IQ/article-cover_image-shrink_720_1280/article-cover_image-shrink_720_1280/0/1695727161208?e=2147483647&v=beta&t=eqZ7hkH2NrnDy7ErmbaVi4vDJYvMW44Mh0P3YX2n6bg"
+  },
+  {
+    id: 3,
+    title: "L'IA au service du développement",
+    excerpt: "Explorez comment l'intelligence artificielle révolutionne les méthodes de développement moderne.",
+    author: "Marie Dupont",
+    created_at: "2026-01-05",
+    category: "IA",
+    image: "https://www.essca-alumni.com/ressources/temp/images/100_851_10937705009x525_33992583436_2702898811_2024114240-1726047756-art-developpement-durable-ia-potentiel-entreprises-glavas.webp"
+  },
+  {
+    id: 4,
+    title: "Best practices pour les applications mobiles",
+    excerpt: "Les bonnes pratiques à suivre pour créer des applications mobiles performantes et intuitives.",
+    author: "Sophie Bernard",
+    created_at: "2025-09-28",
+    category: "Mobile",
+    image: "https://cdn.kellton.com/design-studio-s3/s3fs-public/2024-07/Mobile%20App%20Design%20Best%20Practices.jpg"
+  },
+  {
+    id: 5,
+    title: "Cloud Native : L'avenir du déploiement",
+    excerpt: "Comprendre les principes du Cloud Native et pourquoi c'est essentiel pour les applications modernes.",
+    author: "Jean Martin",
+    created_at: "2026-02-04",
+    category: "Cloud",
+    image: "https://cdn.prod.website-files.com/654ac8098482d38e23dbd331/654ac8098482d38e23dbd4c3_TdTX1ESooa5nISnxd26vcQoSxB3O8vNAWehVvXiW0NM.jpeg"
+  },
+  {
+    id: 6,
+    title: "UX/UI : Les fondamentaux à connaître",
+    excerpt: "Les principes essentiels de design UX/UI pour créer des expériences utilisateur mémorables.",
+    author: "Sophie Bernard",
+    created_at: "2026-02-07",
+    category: "Design",
+    image: "https://media.licdn.com/dms/image/v2/D5612AQFvtFCZ9u3xyA/article-cover_image-shrink_600_2000/article-cover_image-shrink_600_2000/0/1720177347124?e=2147483647&v=beta&t=2LF2rhm1tbomyrVkVrdQ5hzWlxoKfcVxoPR99NYoZCM"
+  }
+];
 
 const Blog = () => {
   const [selectedPost, setSelectedPost] = useState(null);
-  const posts = [
-    {
-      id: 1,
-      title: "Les tendances du développement web en 2025",
-      excerpt: "Découvrez les dernières innovations et technologies qui transforment le paysage du développement web cette année.",
-      author: "Thomas Petit",
-      date: "10 Janvier 2026",
-      readTime: "",
-      category: "Développement",
-      image: "https://tunisie-innovation.tn/uploads/images/1733648239_nouveautes-marche-developpement-preparer-2025.jpeg"
-    },
-    {
-      id: 2,
-      title: "Comment choisir sa stack technologique",
-      excerpt: "Un guide complet pour sélectionner les bonnes technologies adaptées à votre projet et votre équipe.",
-      author: "Jean Martin",
-      date: "23 Décembre 2025",
-      readTime: "",
-      category: "Architecture",
-      image: "https://media.licdn.com/dms/image/v2/D4E12AQGVY03EZ8F2IQ/article-cover_image-shrink_720_1280/article-cover_image-shrink_720_1280/0/1695727161208?e=2147483647&v=beta&t=eqZ7hkH2NrnDy7ErmbaVi4vDJYvMW44Mh0P3YX2n6bg"
-    },
-    {
-      id: 3,
-      title: "L'IA au service du développement",
-      excerpt: "Explorez comment l'intelligence artificielle révolutionne les méthodes de développement moderne.",
-      author: "Marie Dupont",
-      date: "5 janvier 2026",
-      readTime: "",
-      category: "IA",
-      image: "https://www.essca-alumni.com/ressources/temp/images/100_851_10937705009x525_33992583436_2702898811_2024114240-1726047756-art-developpement-durable-ia-potentiel-entreprises-glavas.webp"
-    },
-    {
-      id: 4,
-      title: "Best practices pour les applications mobiles",
-      excerpt: "Les bonnes pratiques à suivre pour créer des applications mobiles performantes et intuitives.",
-      author: "Sophie Bernard",
-      date: "28 Septembre 2025",
-      readTime: "",
-      category: "Mobile",
-      image: "https://cdn.kellton.com/design-studio-s3/s3fs-public/2024-07/Mobile%20App%20Design%20Best%20Practices.jpg"
-    },
-    {
-      id: 5,
-      title: "Cloud Native : L'avenir du déploiement",
-      excerpt: "Comprendre les principes du Cloud Native et pourquoi c'est essentiel pour les applications modernes.",
-      author: "Jean Martin",
-      date: "04 Fevrier 2026",
-      readTime: "",
-      category: "Cloud",
-      image: "https://cdn.prod.website-files.com/654ac8098482d38e23dbd331/654ac8098482d38e23dbd4c3_TdTX1ESooa5nISnxd26vcQoSxB3O8vNAWehVvXiW0NM.jpeg"
-    },
-    {
-      id: 6,
-      title: "UX/UI : Les fondamentaux à connaître",
-      excerpt: "Les principes essentiels de design UX/UI pour créer des expériences utilisateur mémorables.",
-      author: "Sophie Bernard",
-      date: "7 Fevrier 2026",
-      readTime: "",
-      category: "Design",
-      image: "https://media.licdn.com/dms/image/v2/D5612AQFvtFCZ9u3xyA/article-cover_image-shrink_600_2000/article-cover_image-shrink_600_2000/0/1720177347124?e=2147483647&v=beta&t=2LF2rhm1tbomyrVkVrdQ5hzWlxoKfcVxoPR99NYoZCM"
-    }
-  ];
+  const [posts, setPosts] = useState(STATIC_POSTS);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    getPosts()
+      .then((data) => { if (data && data.length > 0) setPosts(data); })
+      .catch(() => {})
+      .finally(() => setLoading(false));
+  }, []);
 
   const categories = ["Tous", "Développement", "Architecture", "IA", "Mobile", "Cloud", "Design"];
 
@@ -76,6 +81,14 @@ const Blog = () => {
 
   if (selectedPost) {
     return <BlogDetail post={selectedPost} onBack={() => setSelectedPost(null)} />;
+  }
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-[#0a0a1a] flex items-center justify-center">
+        <div className="w-8 h-8 border-2 border-blue-400 border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
   }
 
   return (

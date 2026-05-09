@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { ArrowLeft, MapPin, Phone, Mail, Send, Clock } from 'lucide-react';
+import { ArrowLeft, MapPin, Phone, Mail, Send, Clock, CheckCircle, AlertCircle } from 'lucide-react';
 import { Button } from './ui/button';
 import useInView from '../hooks/useInView';
+import { submitContact } from '../lib/api';
 
 const ContactPage = () => {
   const [headerRef, headerInView] = useInView(0.1);
@@ -15,18 +16,23 @@ const ContactPage = () => {
     subject: '',
     message: ''
   });
+  const [status, setStatus] = useState(null); // 'success' | 'error' | 'loading'
 
   const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Form submitted:', formData);
-    // Handle form submission here
+    setStatus('loading');
+    try {
+      await submitContact(formData);
+      setStatus('success');
+      setFormData({ name: '', email: '', phone: '', company: '', subject: '', message: '' });
+    } catch (err) {
+      console.error('Erreur contact:', err);
+      setStatus('error');
+    }
   };
 
   const contactInfo = [
@@ -172,7 +178,7 @@ const ContactPage = () => {
                       value={formData.phone}
                       onChange={handleChange}
                       className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-blue-400 transition-colors"
-                      placeholder="+33 1 23 45 67 89"
+                      placeholder="+225 01 52 11 00 11"
                     />
                   </div>
                   <div>
@@ -219,14 +225,34 @@ const ContactPage = () => {
                   />
                 </div>
 
+                {status === 'success' && (
+                  <div className="flex items-center gap-3 bg-green-500/10 border border-green-500/30 rounded-xl px-4 py-3 text-green-400">
+                    <CheckCircle className="h-5 w-5 flex-shrink-0" />
+                    <span className="text-sm">Message envoyé avec succès ! Nous vous répondrons sous 24h.</span>
+                  </div>
+                )}
+
+                {status === 'error' && (
+                  <div className="flex items-center gap-3 bg-red-500/10 border border-red-500/30 rounded-xl px-4 py-3 text-red-400">
+                    <AlertCircle className="h-5 w-5 flex-shrink-0" />
+                    <span className="text-sm">Une erreur s'est produite. Veuillez réessayer ou nous contacter directement.</span>
+                  </div>
+                )}
+
                 <div className="flex items-center gap-4">
-                  <Button type="submit" className="bg-white text-black hover:bg-gray-100 rounded-full px-8">
-                    <Send className="mr-2 h-4 w-4" />
-                    Envoyer le message
+                  <Button
+                    type="submit"
+                    disabled={status === 'loading'}
+                    className="bg-white text-black hover:bg-gray-100 rounded-full px-8 disabled:opacity-60 disabled:cursor-not-allowed"
+                  >
+                    {status === 'loading' ? (
+                      <div className="w-4 h-4 border-2 border-black border-t-transparent rounded-full animate-spin mr-2" />
+                    ) : (
+                      <Send className="mr-2 h-4 w-4" />
+                    )}
+                    {status === 'loading' ? 'Envoi en cours...' : 'Envoyer le message'}
                   </Button>
-                  <span className="text-gray-400 text-sm">
-                    * Champs obligatoires
-                  </span>
+                  <span className="text-gray-400 text-sm">* Champs obligatoires</span>
                 </div>
               </form>
             </div>

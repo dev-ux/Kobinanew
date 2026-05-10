@@ -108,7 +108,6 @@ const Blog = () => {
   const isFiltering = search.trim() !== '' || activeCategory !== 'Tous';
 
   const [headerRef, headerInView] = useInView(0.1);
-  const [gridRef, gridInView] = useInView(0.05);
 
   if (selectedPost) {
     return <BlogDetail post={selectedPost} onBack={() => setSelectedPost(null)} />;
@@ -240,17 +239,12 @@ const Blog = () => {
           )}
 
           {/* Blog Grid */}
-          <div ref={gridRef} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {filteredPosts.map((post, index) => (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {filteredPosts.map((post) => (
               <article
                 key={post.id}
                 className="bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 overflow-hidden hover:bg-white/10 transition-all duration-300 group cursor-pointer"
                 onClick={() => setSelectedPost(post)}
-                style={{
-                  opacity: gridInView ? 1 : 0,
-                  transform: gridInView ? 'translateY(0)' : 'translateY(40px)',
-                  transition: `opacity 0.6s ease-out ${index * 100}ms, transform 0.6s ease-out ${index * 100}ms`,
-                }}
               >
                 <div className="bg-white/10 h-48 flex items-center justify-center">
                   <img src={post.image} alt={post.title} className="w-full h-full object-cover" />

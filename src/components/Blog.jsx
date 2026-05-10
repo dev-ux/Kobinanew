@@ -94,7 +94,8 @@ const Blog = () => {
       .finally(() => setLoading(false));
   }, []);
 
-  const categories = ["Tous", "Développement", "Architecture", "IA", "Mobile", "Cloud", "Design"];
+  // Génère les catégories dynamiquement depuis les articles chargés
+  const categories = ['Tous', ...new Set(posts.map((p) => p.category).filter(Boolean))];
 
   const filteredPosts = posts.filter((post) => {
     const matchCategory = activeCategory === 'Tous' || post.category === activeCategory;
@@ -240,7 +241,7 @@ const Blog = () => {
 
           {/* Blog Grid */}
           <div ref={gridRef} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {(isFiltering ? filteredPosts : filteredPosts.slice(1)).map((post, index) => (
+            {filteredPosts.map((post, index) => (
               <article
                 key={post.id}
                 className="bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 overflow-hidden hover:bg-white/10 transition-all duration-300 group cursor-pointer"

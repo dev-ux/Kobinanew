@@ -26,6 +26,8 @@ import About from "./components/About";
 import Blog from "./components/Blog";
 import Careers from "./components/Careers";
 import ContactPage from "./components/ContactPage";
+import WebinarIA from "./components/WebinarIA";
+import WebinarPopup from "./components/WebinarPopup";
 
 // Admin
 import AdminLogin from "./components/admin/AdminLogin";
@@ -52,6 +54,7 @@ function HomePage() {
       <Contact />
       <Footer />
       <Toaster />
+      <WebinarPopup />
     </div>
   );
 }
@@ -71,6 +74,7 @@ function App() {
           <Route path="/blog" element={<Blog />} />
           <Route path="/carrières" element={<Careers />} />
           <Route path="/contact" element={<ContactPage />} />
+          <Route path="/webinar-ia" element={<WebinarIA />} />
 
           {/* Admin */}
           <Route path="/admin/login" element={<AdminLogin />} />

@@ -178,7 +178,7 @@ const ContactPage = () => {
                       value={formData.phone}
                       onChange={handleChange}
                       className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-blue-400 transition-colors"
-                      placeholder="+225 01 52 11 00 11"
+                      placeholder="+225 0799610684"
                     />
                   </div>
                   <div>

@@ -14,7 +14,7 @@ const SPEAKERS = [
   { name: "Junior Marvin", role: "CEO, KobinaTech", initials: "JM" },
 ];
 
-const TARGET_DATE = new Date('2025-07-18T10:00:00Z');
+const TARGET_DATE = new Date('2026-07-18T10:00:00Z');
 
 function calcTime() {
   const diff = TARGET_DATE - Date.now();
@@ -116,7 +116,7 @@ function LivestormForm() {
               <Calendar className="w-4 h-4 text-yellow-400 shrink-0" />
               <div>
                 <p className="text-xs text-gray-500">Date</p>
-                <p className="text-sm text-white font-medium">Samedi 18 juillet 2025</p>
+                <p className="text-sm text-white font-medium">Samedi 18 juillet 2026</p>
               </div>
             </div>
             <div className="flex items-center gap-3 bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-left">
@@ -224,7 +224,7 @@ export default function WebinarIA() {
               <div className="flex flex-wrap gap-4 mb-8">
                 <div className="flex items-center gap-2 bg-white/5 border border-white/10 rounded-xl px-4 py-2.5">
                   <Calendar className="w-4 h-4 text-yellow-400" />
-                  <span className="text-sm font-medium">Samedi 18 juillet 2025</span>
+                  <span className="text-sm font-medium">Samedi 18 juillet 2026</span>
                 </div>
                 <div className="flex items-center gap-2 bg-white/5 border border-white/10 rounded-xl px-4 py-2.5">
                   <Clock className="w-4 h-4 text-yellow-400" />
@@ -359,7 +359,7 @@ export default function WebinarIA() {
                   </div>
                   <div>
                     <p className="text-xs text-gray-500 uppercase tracking-wide">Date</p>
-                    <p className="text-sm font-medium text-white">Samedi 18 juillet 2025</p>
+                    <p className="text-sm font-medium text-white">Samedi 18 juillet 2026</p>
                   </div>
                 </div>
 

@@ -76,7 +76,7 @@ export default function WebinarPopup() {
           <div className="flex items-center gap-4 mb-5">
             <div className="flex items-center gap-1.5 text-xs text-gray-300">
               <Calendar className="w-3.5 h-3.5 text-yellow-400" />
-              Samedi 18 juillet 2025
+              Samedi 18 juillet 2026
             </div>
             <div className="flex items-center gap-1.5 text-xs text-gray-300">
               <Clock className="w-3.5 h-3.5 text-blue-400" />

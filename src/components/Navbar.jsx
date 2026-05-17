@@ -1,18 +1,45 @@
 import React, { useState, useEffect } from 'react';
 import { Menu, X } from 'lucide-react';
 import { Button } from './ui/button';
+import { useLocation, useNavigate } from 'react-router-dom';
+
+const NAV_LINKS = [
+  { label: 'Solutions',  anchor: 'solutions' },
+  { label: 'Industries', anchor: 'industries' },
+  { label: 'Processus',  anchor: 'process' },
+  { label: 'FAQ',        anchor: 'faq' },
+];
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const location = useLocation();
+  const navigate = useNavigate();
+  const isHome = location.pathname === '/';
 
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
-    };
+    const handleScroll = () => setIsScrolled(window.scrollY > 20);
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  const handleNav = (anchor) => {
+    setIsMobileMenuOpen(false);
+    if (isHome) {
+      document.getElementById(anchor)?.scrollIntoView({ behavior: 'smooth' });
+    } else {
+      navigate(`/#${anchor}`);
+    }
+  };
+
+  const handleContact = () => {
+    setIsMobileMenuOpen(false);
+    if (isHome) {
+      document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' });
+    } else {
+      navigate('/#contact');
+    }
+  };
 
   return (
     <nav
@@ -23,31 +50,28 @@ const Navbar = () => {
       <div className="max-w-7xl mx-auto px-6">
         <div className="flex items-center justify-between">
           {/* Logo */}
-          <div className="flex items-center">
+          <div className="flex items-center cursor-pointer" onClick={() => navigate('/')}>
             <img src="/logoko.png" alt="Kobinatech" className="h-20 w-auto brightness-0 invert" />
           </div>
 
           {/* Desktop Menu */}
           <div className="hidden md:flex items-center gap-8">
-            <a href="#solutions" className="text-gray-300 hover:text-white transition-colors text-sm">
-              Solutions
-            </a>
-            <a href="#industries" className="text-gray-300 hover:text-white transition-colors text-sm">
-              Industries
-            </a>
-            <a href="#process" className="text-gray-300 hover:text-white transition-colors text-sm">
-              Processus
-            </a>
-            <a href="#faq" className="text-gray-300 hover:text-white transition-colors text-sm">
-              FAQ
-            </a>
+            {NAV_LINKS.map(({ label, anchor }) => (
+              <button
+                key={anchor}
+                onClick={() => handleNav(anchor)}
+                className="text-gray-300 hover:text-white transition-colors text-sm bg-transparent border-none cursor-pointer"
+              >
+                {label}
+              </button>
+            ))}
           </div>
 
           {/* CTA Button */}
           <div className="hidden md:block">
             <Button
               className="bg-white text-black hover:bg-gray-100 rounded-full px-6 py-2.5 text-sm font-medium transition-all duration-300"
-              onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}
+              onClick={handleContact}
             >
               <span className="mr-2">●</span>
               Contactez-nous
@@ -66,19 +90,19 @@ const Navbar = () => {
         {/* Mobile Menu */}
         {isMobileMenuOpen && (
           <div className="md:hidden mt-4 pb-4 space-y-4">
-            <a href="#solutions" className="block text-gray-300 hover:text-white transition-colors">
-              Solutions
-            </a>
-            <a href="#industries" className="block text-gray-300 hover:text-white transition-colors">
-              Industries
-            </a>
-            <a href="#process" className="block text-gray-300 hover:text-white transition-colors">
-              Processus
-            </a>
-            <a href="#faq" className="block text-gray-300 hover:text-white transition-colors">
-              FAQ
-            </a>
-            <Button className="bg-white text-black hover:bg-gray-100 rounded-full w-full">
+            {NAV_LINKS.map(({ label, anchor }) => (
+              <button
+                key={anchor}
+                onClick={() => handleNav(anchor)}
+                className="block w-full text-left text-gray-300 hover:text-white transition-colors bg-transparent border-none cursor-pointer"
+              >
+                {label}
+              </button>
+            ))}
+            <Button
+              className="bg-white text-black hover:bg-gray-100 rounded-full w-full"
+              onClick={handleContact}
+            >
               Contactez-nous
             </Button>
           </div>

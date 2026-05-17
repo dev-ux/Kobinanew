@@ -246,7 +246,7 @@ export default function WebinarIA() {
             <div className="relative">
               <div className="rounded-2xl overflow-hidden border border-white/10 shadow-2xl shadow-blue-900/40">
                 <img
-                  src="/webinar-ia-banner.png"
+                  src="/webinar.jpg"
                   alt="Webinar IA — Décision algorithmique opaques"
                   className="w-full h-auto"
                   onError={(e) => {

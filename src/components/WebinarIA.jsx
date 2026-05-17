@@ -10,9 +10,6 @@ const POINTS = [
   "Retours d'expériences concrets de projets IA en entreprise",
 ];
 
-const SPEAKERS = [
-  { name: "Junior Marvin", role: "CEO, KobinaTech", initials: "JM" },
-];
 
 const TARGET_DATE = new Date('2026-07-18T10:00:00Z');
 
@@ -302,19 +299,25 @@ export default function WebinarIA() {
             </div>
 
             <div>
-              <h3 className="text-2xl font-bold mb-6">Intervenant</h3>
-              <div className="space-y-4">
-                {SPEAKERS.map((s) => (
-                  <div key={s.name} className="flex items-center gap-4 bg-white/5 border border-white/10 rounded-xl p-4">
-                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-bold text-sm shrink-0">
-                      {s.initials}
-                    </div>
-                    <div>
-                      <p className="font-semibold text-white">{s.name}</p>
-                      <p className="text-sm text-gray-400">{s.role}</p>
-                    </div>
+              <h3 className="text-2xl font-bold mb-6">Intervenants</h3>
+              <div className="bg-gradient-to-br from-blue-500/10 to-indigo-500/10 border border-white/10 rounded-2xl p-6 text-center">
+                <div className="flex justify-center mb-4">
+                  <div className="flex -space-x-3">
+                    {[...Array(4)].map((_, i) => (
+                      <div key={i} className="w-11 h-11 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 border-2 border-[#020818] flex items-center justify-center">
+                        <Users className="w-4 h-4 text-white" />
+                      </div>
+                    ))}
                   </div>
-                ))}
+                </div>
+                <p className="text-white font-semibold text-lg mb-2">Des experts de renom</p>
+                <p className="text-gray-400 text-sm leading-relaxed max-w-xs mx-auto">
+                  Praticiens, chercheurs et décideurs partageront leurs expériences concrètes sur l'IA et la transparence algorithmique.
+                </p>
+                <div className="mt-4 inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-yellow-400/10 border border-yellow-400/20 text-yellow-300 text-xs font-medium">
+                  <span className="w-1.5 h-1.5 rounded-full bg-yellow-400 animate-pulse" />
+                  Annonce des intervenants à venir
+                </div>
               </div>
 
               <div className="mt-6 bg-blue-500/10 border border-blue-500/20 rounded-xl p-4">

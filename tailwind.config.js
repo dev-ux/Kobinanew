@@ -7,12 +7,21 @@ module.exports = {
   ],
   theme: {
   	extend: {
+			fontFamily: {
+				display: ['"Bricolage Grotesque"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+			},
   		borderRadius: {
   			lg: 'var(--radius)',
   			md: 'calc(var(--radius) - 2px)',
   			sm: 'calc(var(--radius) - 4px)'
   		},
   		colors: {
+			ink: { DEFAULT: '#0B1530', soft: '#2A3350' },
+			navy: { DEFAULT: '#08286C', deep: '#061C4D' },
+			leaf: { DEFAULT: '#1E9E3E', soft: '#E6F4EA' },
+			paper: '#F6F5F0',
+			line: '#E3E1D8',
+			dim: '#5A6178',
   			background: 'hsl(var(--background))',
   			foreground: 'hsl(var(--foreground))',
   			card: {

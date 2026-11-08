@@ -1,84 +1,39 @@
-import React from 'react';
-import { ArrowLeft, Calendar, Clock, User, Tag } from 'lucide-react';
-import { format } from 'date-fns';
-import { fr } from 'date-fns/locale';
-import './BlogDetail.css';
+import React, { useMemo } from 'react';
+import DOMPurify from 'dompurify';
+import { ArrowLeft } from 'lucide-react';
+import { formatDate, PostCover } from './Blog';
 
-const formatDate = (val) => {
-  if (!val) return '';
-  try { return format(new Date(val), 'd MMM yyyy', { locale: fr }); }
-  catch { return val; }
-};
+// Le contenu vient de la base : on le nettoie avant affichage (anti-XSS)
+DOMPurify.addHook('afterSanitizeAttributes', (node) => {
+  if (node.tagName === 'A') {
+    node.setAttribute('target', '_blank');
+    node.setAttribute('rel', 'noopener noreferrer');
+  }
+});
 
-const BlogDetail = ({ post, onBack }) => {
-  const articleContent = post.content
-    ? { content: post.content }
-    : { content: '<p>Article en cours de rédaction...</p>' };
+const sanitize = (html) =>
+  DOMPurify.sanitize(html || '', {
+    USE_PROFILES: { html: true },
+    FORBID_TAGS: ['style', 'iframe', 'form', 'input', 'script', 'object', 'embed'],
+    FORBID_ATTR: ['style'],
+  });
+
+export default function BlogDetail({ post, onBack }) {
+  const html = useMemo(
+    () => sanitize(post.content || '<p>Article en cours de rédaction.</p>'),
+    [post.content]
+  );
 
   return (
-    <div className="min-h-screen bg-[#0a0a1a] text-gray-300">
-      
-      <main className="pt-24 pb-16">
-        <div className="container mx-auto px-4 max-w-4xl">
-          <button 
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              console.log('Retour au blog cliqué');
-              if (onBack && typeof onBack === 'function') {
-                onBack();
-              } else {
-                console.error('onBack is not defined or not a function');
-              }
-            }}
-            className="mb-8 bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded inline-flex items-center gap-2"
-            type="button"
-          >
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Retour au blog
-          </button>
-
-          <article className="bg-white/5 backdrop-blur-sm rounded-2xl p-8">
-            <header className="mb-8">
-              <h1 className="text-4xl font-bold text-white mb-4">{post.title}</h1>
-              
-              <div className="flex flex-wrap gap-4 text-sm text-gray-400">
-                <div className="flex items-center gap-2">
-                  <User className="w-4 h-4" />
-                  {post.author}
-                </div>
-                <div className="flex items-center gap-2">
-                  <Calendar className="w-4 h-4" />
-                  {formatDate(post.created_at)}
-                </div>
-                <div className="flex items-center gap-2">
-                  <Clock className="w-4 h-4" />
-                  {post.read_time}
-                </div>
-                <div className="flex items-center gap-2">
-                  <Tag className="w-4 h-4" />
-                  {post.category}
-                </div>
-              </div>
-            </header>
-
-            <div className="mb-8">
-              <img 
-                src={post.image} 
-                alt={post.title} 
-                className="w-full h-64 object-cover rounded-xl"
-              />
-            </div>
-
-            <div 
-              className="prose prose-invert max-w-none"
-              dangerouslySetInnerHTML={{ __html: articleContent.content }}
-            />
-          </article>
-        </div>
-      </main>
-    </div>
+    <article className="mx-auto max-w-3xl px-4 pb-24 pt-10 sm:px-6">
+      <button type="button" onClick={onBack} className="inline-flex items-center gap-2 text-sm font-semibold text-navy hover:underline">
+        <ArrowLeft className="h-4 w-4" aria-hidden="true" /> Tous les articles
+      </button>
+      <p className="mt-10 font-mono text-xs uppercase tracking-[0.14em] text-leaf">{post.category}</p>
+      <h1 className="mt-3 font-display text-4xl font-bold leading-tight tracking-tight text-ink md:text-5xl">{post.title}</h1>
+      <p className="mt-4 text-dim">{[post.author, formatDate(post.created_at)].filter(Boolean).join(' · ')}</p>
+      <PostCover post={post} className="mt-10 rounded-2xl" />
+      <div className="article-body mt-10 text-[17px] text-ink-soft" dangerouslySetInnerHTML={{ __html: html }} />
+    </article>
   );
-};
-
-export default BlogDetail;
+}

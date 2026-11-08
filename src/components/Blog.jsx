@@ -1,299 +1,142 @@
-import React, { useState, useEffect } from 'react';
-import { ArrowLeft, Calendar, Clock, User, Tag, Search } from 'lucide-react';
-import { Button } from './ui/button';
-import BlogDetail from './BlogDetail';
-import useInView from '../hooks/useInView';
-import { getPosts } from '../lib/api';
+import React, { useEffect, useMemo, useState } from 'react';
+import { Search } from 'lucide-react';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
+import PageHeader from './layout/PageHeader';
+import { PageFallback } from './layout/SiteLayout';
+import BlogDetail from './BlogDetail';
+import { getPosts } from '../lib/api';
 
-const formatDate = (val) => {
+export const formatDate = (val) => {
   if (!val) return '';
-  try { return format(new Date(val), 'd MMM yyyy', { locale: fr }); }
-  catch { return val; }
+  try { return format(new Date(val), 'd MMMM yyyy', { locale: fr }); } catch { return ''; }
 };
 
-const STATIC_POSTS = [
-  {
-    id: 1,
-    title: "Les tendances du développement web en 2025",
-    excerpt: "Découvrez les dernières innovations et technologies qui transforment le paysage du développement web cette année.",
-    author: "Thomas Petit",
-    created_at: "2026-01-10",
-    read_time: "5 min",
-    category: "Développement",
-    image: "https://tunisie-innovation.tn/uploads/images/1733648239_nouveautes-marche-developpement-preparer-2025.jpeg"
-  },
-  {
-    id: 2,
-    title: "Comment choisir sa stack technologique",
-    excerpt: "Un guide complet pour sélectionner les bonnes technologies adaptées à votre projet et votre équipe.",
-    author: "Jean Martin",
-    created_at: "2025-12-23",
-    read_time: "7 min",
-    category: "Architecture",
-    image: "https://media.licdn.com/dms/image/v2/D4E12AQGVY03EZ8F2IQ/article-cover_image-shrink_720_1280/article-cover_image-shrink_720_1280/0/1695727161208?e=2147483647&v=beta&t=eqZ7hkH2NrnDy7ErmbaVi4vDJYvMW44Mh0P3YX2n6bg"
-  },
-  {
-    id: 3,
-    title: "L'IA au service du développement",
-    excerpt: "Explorez comment l'intelligence artificielle révolutionne les méthodes de développement moderne.",
-    author: "Marie Dupont",
-    created_at: "2026-01-05",
-    read_time: "6 min",
-    category: "IA",
-    image: "https://www.essca-alumni.com/ressources/temp/images/100_851_10937705009x525_33992583436_2702898811_2024114240-1726047756-art-developpement-durable-ia-potentiel-entreprises-glavas.webp"
-  },
-  {
-    id: 4,
-    title: "Best practices pour les applications mobiles",
-    excerpt: "Les bonnes pratiques à suivre pour créer des applications mobiles performantes et intuitives.",
-    author: "Sophie Bernard",
-    created_at: "2025-09-28",
-    read_time: "8 min",
-    category: "Mobile",
-    image: "https://cdn.kellton.com/design-studio-s3/s3fs-public/2024-07/Mobile%20App%20Design%20Best%20Practices.jpg"
-  },
-  {
-    id: 5,
-    title: "Cloud Native : L'avenir du déploiement",
-    excerpt: "Comprendre les principes du Cloud Native et pourquoi c'est essentiel pour les applications modernes.",
-    author: "Jean Martin",
-    created_at: "2026-02-04",
-    read_time: "6 min",
-    category: "Cloud",
-    image: "https://cdn.prod.website-files.com/654ac8098482d38e23dbd331/654ac8098482d38e23dbd4c3_TdTX1ESooa5nISnxd26vcQoSxB3O8vNAWehVvXiW0NM.jpeg"
-  },
-  {
-    id: 6,
-    title: "UX/UI : Les fondamentaux à connaître",
-    excerpt: "Les principes essentiels de design UX/UI pour créer des expériences utilisateur mémorables.",
-    author: "Sophie Bernard",
-    created_at: "2026-02-07",
-    read_time: "5 min",
-    category: "Design",
-    image: "https://media.licdn.com/dms/image/v2/D5612AQFvtFCZ9u3xyA/article-cover_image-shrink_600_2000/article-cover_image-shrink_600_2000/0/1720177347124?e=2147483647&v=beta&t=2LF2rhm1tbomyrVkVrdQ5hzWlxoKfcVxoPR99NYoZCM"
-  }
-];
+// N'accepte que des URLs d'images en https (évite javascript:, data:, etc.)
+export const safeImage = (url) => (typeof url === 'string' && /^https:\/\//i.test(url) ? url : null);
 
-const Blog = () => {
-  const [selectedPost, setSelectedPost] = useState(null);
-  const [posts, setPosts] = useState(STATIC_POSTS);
-  const [loading, setLoading] = useState(true);
-  const [search, setSearch] = useState('');
-  const [activeCategory, setActiveCategory] = useState('Tous');
-
-  useEffect(() => {
-    getPosts()
-      .then((data) => {
-        if (Array.isArray(data) && data.length > 0) {
-          setPosts(data);
-        }
-      })
-      .catch((err) => console.error('[Blog] Erreur chargement articles:', err))
-      .finally(() => setLoading(false));
-  }, []);
-
-  // Génère les catégories dynamiquement depuis les articles chargés
-  const categories = ['Tous', ...new Set(posts.map((p) => p.category).filter(Boolean))];
-
-  const filteredPosts = posts.filter((post) => {
-    const matchCategory = activeCategory === 'Tous' || post.category === activeCategory;
-    const q = search.toLowerCase();
-    const matchSearch = !q || [post.title, post.excerpt, post.author, post.category]
-      .some((f) => f && f.toLowerCase().includes(q));
-    return matchCategory && matchSearch;
-  });
-
-  const isFiltering = search.trim() !== '' || activeCategory !== 'Tous';
-
-  const [headerRef, headerInView] = useInView(0.1);
-
-  if (selectedPost) {
-    return <BlogDetail post={selectedPost} onBack={() => setSelectedPost(null)} />;
-  }
-
-  if (loading) {
+export function PostCover({ post, className = '' }) {
+  const src = safeImage(post.image);
+  if (src) {
     return (
-      <div className="min-h-screen bg-[#0a0a1a] flex items-center justify-center">
-        <div className="w-8 h-8 border-2 border-blue-400 border-t-transparent rounded-full animate-spin" />
-      </div>
+      <img
+        src={src}
+        alt=""
+        loading="lazy"
+        decoding="async"
+        width="640"
+        height="360"
+        className={`aspect-video w-full object-cover ${className}`}
+      />
     );
   }
-
   return (
-    <div className="min-h-screen bg-[#0a0a1a] text-gray-300">
-      <main className="pt-24 pb-16">
-        <div className="container mx-auto px-4 max-w-6xl">
-          <Button
-            variant="ghost"
-            className="mb-6 text-gray-400 hover:text-white"
-            onClick={() => window.history.back()}
-          >
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Retour
-          </Button>
-
-          {/* Header */}
-          <div
-            ref={headerRef}
-            className="text-center mb-12"
-            style={{
-              opacity: headerInView ? 1 : 0,
-              transform: headerInView ? 'translateY(0)' : 'translateY(40px)',
-              transition: 'opacity 0.8s ease-out, transform 0.8s ease-out',
-            }}
-          >
-            <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
-              Blog <span className="shimmer-text">KOBINATECH</span>
-            </h1>
-            <p className="text-xl text-gray-400 max-w-3xl mx-auto">
-              Découvrez nos articles, tutoriels et analyses sur les dernières tendances
-              technologiques et les meilleures pratiques du développement.
-            </p>
-          </div>
-
-          {/* Search and Filter */}
-          <div className="flex flex-col md:flex-row gap-4 mb-12">
-            <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-              <input
-                type="text"
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                placeholder="Rechercher un article..."
-                className="w-full pl-10 pr-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-blue-400 transition-colors"
-              />
-            </div>
-            <div className="flex gap-2 flex-wrap">
-              {categories.map((category) => (
-                <button
-                  key={category}
-                  onClick={() => setActiveCategory(category)}
-                  className={`px-4 py-2 rounded-lg border transition-colors ${
-                    activeCategory === category
-                      ? 'bg-blue-500 text-white border-blue-500'
-                      : 'bg-white/5 text-gray-300 border-white/10 hover:bg-white/10'
-                  }`}
-                >
-                  {category}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* No results */}
-          {filteredPosts.length === 0 && (
-            <div className="text-center py-20">
-              <p className="text-gray-400 text-lg">Aucun article trouvé.</p>
-              <button
-                onClick={() => { setSearch(''); setActiveCategory('Tous'); }}
-                className="mt-4 text-blue-400 text-sm hover:underline"
-              >
-                Réinitialiser les filtres
-              </button>
-            </div>
-          )}
-
-          {/* Featured Post — caché pendant une recherche ou si aucun résultat */}
-          {filteredPosts.length > 0 && !isFiltering && (
-          <div className="bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-2xl border border-white/10 p-8 mb-12">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
-              <div>
-                <div className="flex items-center gap-4 mb-4">
-                  <span className="px-3 py-1 bg-blue-500 text-white text-sm rounded-full">Featured</span>
-                  <span className="text-gray-400 text-sm">Article mis en avant</span>
-                </div>
-                <h2 className="text-3xl font-bold text-white mb-4">
-                  {posts[0].title}
-                </h2>
-                <p className="text-gray-300 mb-6 leading-relaxed">
-                  {posts[0].excerpt}
-                </p>
-                <div className="flex items-center gap-4 text-sm text-gray-400 mb-6">
-                  <div className="flex items-center gap-2">
-                    <User className="h-4 w-4" />
-                    {posts[0].author}
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Calendar className="h-4 w-4" />
-                    {formatDate(posts[0].created_at)}
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Clock className="h-4 w-4" />
-                    {posts[0].read_time}
-                  </div>
-                </div>
-                <Button
-                  className="bg-white text-black hover:bg-gray-100 rounded-full"
-                  onClick={() => setSelectedPost(posts[0])}
-                >
-                  Lire l'article
-                </Button>
-              </div>
-              <div className="bg-white/10 rounded-xl h-64 flex items-center justify-center">
-                <img src={posts[0].image} alt={posts[0].title} className="w-full h-full object-cover" />
-              </div>
-            </div>
-          </div>
-          )}
-
-          {/* Blog Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {filteredPosts.map((post) => (
-              <article
-                key={post.id}
-                className="bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 overflow-hidden hover:bg-white/10 transition-all duration-300 group cursor-pointer"
-                onClick={() => setSelectedPost(post)}
-              >
-                <div className="bg-white/10 h-48 flex items-center justify-center">
-                  <img src={post.image} alt={post.title} className="w-full h-full object-cover" />
-                </div>
-                <div className="p-6">
-                  <div className="flex items-center gap-2 mb-3">
-                    <Tag className="h-4 w-4 text-blue-400" />
-                    <span className="text-blue-400 text-sm">{post.category}</span>
-                  </div>
-                  <h3 className="text-xl font-bold text-white mb-3 group-hover:text-blue-400 transition-colors">
-                    {post.title}
-                  </h3>
-                  <p className="text-gray-400 mb-4 line-clamp-3">
-                    {post.excerpt}
-                  </p>
-                  <div className="flex items-center justify-between text-sm text-gray-400">
-                    <div className="flex items-center gap-2">
-                      <User className="h-4 w-4" />
-                      {post.author}
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Clock className="h-4 w-4" />
-                      {post.read_time}
-                    </div>
-                  </div>
-                  <div className="mt-4 pt-4 border-t border-white/10">
-                    <div className="flex items-center gap-2 text-sm text-gray-400">
-                      <Calendar className="h-4 w-4" />
-                      {formatDate(post.created_at)}
-                    </div>
-                  </div>
-                </div>
-              </article>
-            ))}
-          </div>
-
-          {/* Load More */}
-          <div className="text-center mt-12">
-            <Button 
-              variant="outline" 
-              className="border-white/20 text-white hover:bg-white/10 rounded-full px-8"
-            >
-              Charger plus d'articles
-            </Button>
-          </div>
-        </div>
-      </main>
+    <div className={`flex aspect-video w-full items-end bg-gradient-to-br from-navy to-ink p-5 ${className}`} aria-hidden="true">
+      <span className="font-mono text-xs uppercase tracking-[0.16em] text-emerald-300">{post.category || 'Article'}</span>
     </div>
   );
-};
+}
 
-export default Blog;
+export default function Blog() {
+  const [posts, setPosts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [failed, setFailed] = useState(false);
+  const [search, setSearch] = useState('');
+  const [category, setCategory] = useState('Tous');
+  const [selected, setSelected] = useState(null);
+
+  useEffect(() => {
+    let alive = true;
+    getPosts()
+      .then((data) => alive && setPosts(Array.isArray(data) ? data : []))
+      .catch(() => alive && setFailed(true))
+      .finally(() => alive && setLoading(false));
+    return () => { alive = false; };
+  }, []);
+
+  const categories = useMemo(() => ['Tous', ...new Set(posts.map((p) => p.category).filter(Boolean))], [posts]);
+
+  const filtered = posts.filter((p) => {
+    const q = search.trim().toLowerCase();
+    const okCat = category === 'Tous' || p.category === category;
+    const okSearch = !q || [p.title, p.excerpt, p.author, p.category].some((f) => f && f.toLowerCase().includes(q));
+    return okCat && okSearch;
+  });
+
+  useEffect(() => { window.scrollTo(0, 0); }, [selected]);
+
+  if (selected) return <BlogDetail post={selected} onBack={() => setSelected(null)} />;
+
+  return (
+    <>
+      <PageHeader
+        eyebrow="Blog"
+        title="Notes de terrain."
+        intro="Ce que nous apprenons en construisant des produits : choix techniques, retours d'expérience et conseils pratiques."
+      />
+      <section className="mx-auto max-w-6xl px-4 py-12 sm:px-6 md:py-16">
+        {loading ? (
+          <PageFallback />
+        ) : posts.length === 0 ? (
+          <div className="rounded-2xl border border-dashed border-line bg-white px-6 py-16 text-center">
+            <p className="font-display text-2xl font-bold text-ink">Les premiers articles arrivent bientôt.</p>
+            <p className="mt-2 text-dim">
+              {failed ? 'Le blog est momentanément indisponible.' : 'Revenez dans quelques jours, ou suivez-nous pour être prévenu.'}
+            </p>
+          </div>
+        ) : (
+          <>
+            <div className="mb-10 flex flex-col gap-4 md:flex-row md:items-center">
+              <label className="relative flex-1">
+                <span className="sr-only">Rechercher un article</span>
+                <Search className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-dim" aria-hidden="true" />
+                <input
+                  type="search"
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  placeholder="Rechercher un article…"
+                  className="w-full rounded-full border border-line bg-white py-3 pl-11 pr-4 text-ink focus:border-navy focus:outline-none focus:ring-2 focus:ring-navy/20"
+                />
+              </label>
+              <div className="flex flex-wrap gap-2">
+                {categories.map((c) => (
+                  <button
+                    key={c}
+                    type="button"
+                    aria-pressed={category === c}
+                    onClick={() => setCategory(c)}
+                    className={`rounded-full border px-4 py-2 text-sm transition-colors ${
+                      category === c ? 'border-navy bg-navy text-white' : 'border-line bg-white text-ink-soft hover:border-navy/40'
+                    }`}
+                  >
+                    {c}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {filtered.length === 0 ? (
+              <p className="py-16 text-center text-dim">Aucun article ne correspond à votre recherche.</p>
+            ) : (
+              <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                {filtered.map((post) => (
+                  <article key={post.id} className="group overflow-hidden rounded-2xl border border-line bg-white transition-shadow hover:shadow-[0_12px_40px_-16px_rgba(8,40,108,0.25)]">
+                    <button type="button" onClick={() => setSelected(post)} className="block w-full text-left">
+                      <PostCover post={post} />
+                      <div className="p-6">
+                        <p className="font-mono text-xs uppercase tracking-[0.14em] text-leaf">{post.category}</p>
+                        <h2 className="mt-2 text-xl font-bold text-ink group-hover:text-navy">{post.title}</h2>
+                        <p className="mt-2 line-clamp-3 text-dim">{post.excerpt}</p>
+                        <p className="mt-5 text-sm text-dim">{[post.author, formatDate(post.created_at)].filter(Boolean).join(' · ')}</p>
+                      </div>
+                    </button>
+                  </article>
+                ))}
+              </div>
+            )}
+          </>
+        )}
+      </section>
+    </>
+  );
+}

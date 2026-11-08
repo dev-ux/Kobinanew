@@ -1,26 +1,15 @@
 import React from 'react';
-import { ArrowLeft } from 'lucide-react';
-import { Button } from './ui/button';
-import Navbar from './Navbar';
 
 const CGV = () => {
   return (
-    <div className="min-h-screen bg-[#0a0a1a] text-gray-300">
-      <main className="pt-24 pb-16">
-        <div className="container mx-auto px-4 max-w-4xl">
-          <Button
-            variant="ghost"
-            className="mb-6 text-gray-400 hover:text-white"
-            onClick={() => window.history.back()}
-          >
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Retour
-          </Button>
+    <div className="text-ink-soft">
+      <div className="py-14 md:py-20">
+        <div className="mx-auto max-w-3xl px-4 sm:px-6">
           
-          <h1 className="text-4xl font-bold text-white mb-2">Conditions Générales d'Utilisation</h1>
-          <p className="text-gray-400 mb-12">En vigueur au 24 juillet 2024</p>
+          <h1 className="font-display text-4xl md:text-5xl font-bold text-ink mb-2">Conditions Générales d'Utilisation</h1>
+          <p className="text-dim mb-12">En vigueur au 24 juillet 2024</p>
           
-          <div className="prose prose-invert max-w-none">
+          <div className="max-w-none">
             <section className="mb-12">
               <p className="mb-6">
                 Les présentes conditions générales d'utilisation (dites « CGU ») ont pour objet l'encadrement juridique des modalités de mise à disposition du site et des services par KobinaTech et de définir les conditions d'accès et d'utilisation des services par « l'Utilisateur ».
@@ -120,7 +109,7 @@ const CGV = () => {
             </section>
           </div>
         </div>
-      </main>
+      </div>
     </div>
   );
 };

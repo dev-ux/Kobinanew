@@ -1,7 +1,5 @@
 import React from 'react';
-import { ArrowLeft, Shield, Database, Eye, UserCheck, Lock } from 'lucide-react';
-import { Button } from './ui/button';
-import Navbar from './Navbar';
+import { Shield, Database, Eye, UserCheck, Lock } from 'lucide-react';
 
 const PrivacyPolicy = () => {
   const sections = [
@@ -13,7 +11,7 @@ const PrivacyPolicy = () => {
           <p>
             Nous collectons les données personnelles que vous nous fournissez volontairement lorsque vous :
           </p>
-          <ul className="list-disc list-inside space-y-1 text-gray-300 ml-4">
+          <ul className="list-disc list-inside space-y-1 text-ink-soft ml-4">
             <li>Remplissez notre formulaire de contact</li>
             <li>Vous abonnez à notre newsletter</li>
             <li>Demandez un devis ou des informations</li>
@@ -34,7 +32,7 @@ const PrivacyPolicy = () => {
           <p>
             Vos données personnelles sont utilisées pour :
           </p>
-          <ul className="list-disc list-inside space-y-1 text-gray-300 ml-4">
+          <ul className="list-disc list-inside space-y-1 text-ink-soft ml-4">
             <li>Répondre à vos demandes et vous fournir nos services</li>
             <li>Vous envoyer des informations commerciales (avec votre consentement)</li>
             <li>Améliorer nos services et votre expérience utilisateur</li>
@@ -52,7 +50,7 @@ const PrivacyPolicy = () => {
             Nous ne vendons, ne louons ni ne partageons vos données personnelles avec des tiers, 
             sauf dans les cas suivants :
           </p>
-          <ul className="list-disc list-inside space-y-1 text-gray-300 ml-4">
+          <ul className="list-disc list-inside space-y-1 text-ink-soft ml-4">
             <li>Avec votre consentement explicite</li>
             <li>Pour fournir les services demandés (sous-traitants)</li>
             <li>Pour respecter une obligation légale</li>
@@ -70,7 +68,7 @@ const PrivacyPolicy = () => {
             Nous mettons en œuvre des mesures de sécurité techniques et organisationnelles 
             appropriées pour protéger vos données personnelles contre :
           </p>
-          <ul className="list-disc list-inside space-y-1 text-gray-300 ml-4">
+          <ul className="list-disc list-inside space-y-1 text-ink-soft ml-4">
             <li>L'accès non autorisé</li>
             <li>La modification, la destruction ou la perte accidentelle</li>
             <li>La divulgation ou l'accès non autorisé</li>
@@ -90,7 +88,7 @@ const PrivacyPolicy = () => {
           <p>
             Conformément au RGPD, vous disposez des droits suivants sur vos données personnelles :
           </p>
-          <ul className="list-disc list-inside space-y-1 text-gray-300 ml-4">
+          <ul className="list-disc list-inside space-y-1 text-ink-soft ml-4">
             <li><strong>Droit d'accès</strong> : savoir si nous traitons vos données</li>
             <li><strong>Droit de rectification</strong> : corriger vos données inexactes</li>
             <li><strong>Droit à l'effacement</strong> : demander la suppression de vos données</li>
@@ -104,24 +102,15 @@ const PrivacyPolicy = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-[#0a0a1a] text-gray-300">
-      <Navbar />
-      <main className="pt-24 pb-16">
-        <div className="container mx-auto px-4 max-w-4xl">
-          <Button
-            variant="ghost"
-            className="mb-6 text-gray-400 hover:text-white"
-            onClick={() => window.history.back()}
-          >
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Retour
-          </Button>
+    <div className="text-ink-soft">
+      <div className="py-14 md:py-20">
+        <div className="mx-auto max-w-3xl px-4 sm:px-6">
           
           <div className="text-center mb-12">
-            <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
+            <h1 className="font-display text-4xl md:text-5xl font-bold text-ink mb-4">
               Politique de Confidentialité
             </h1>
-            <p className="text-gray-400 text-lg">
+            <p className="text-dim text-lg">
               Dernière mise à jour : {new Date().toLocaleDateString('fr-FR', { 
                 year: 'numeric', 
                 month: 'long', 
@@ -130,13 +119,13 @@ const PrivacyPolicy = () => {
             </p>
           </div>
 
-          <div className="bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 p-8 mb-8">
+          <div className="bg-white rounded-2xl border border-line p-8 mb-8">
             <p className="text-lg leading-relaxed mb-6">
               Chez KOBINATECH, nous nous engageons à protéger votre vie privée et à garantir 
               la sécurité de vos données personnelles. Cette politique explique comment nous 
               collectons, utilisons et protégeons vos informations.
             </p>
-            <p className="text-gray-300">
+            <p className="text-ink-soft">
               En utilisant nos services, vous acceptez les pratiques décrites dans cette politique.
             </p>
           </div>
@@ -147,19 +136,19 @@ const PrivacyPolicy = () => {
               return (
                 <div 
                   key={index}
-                  className="bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 p-8 hover:bg-white/10 transition-all duration-300"
+                  className="bg-white rounded-2xl border border-line p-8"
                 >
                   <div className="flex items-start gap-4">
                     <div className="flex-shrink-0">
-                      <div className="w-12 h-12 bg-blue-500/20 rounded-lg flex items-center justify-center">
-                        <Icon className="h-6 w-6 text-blue-400" />
+                      <div className="w-12 h-12 bg-navy/5 rounded-lg flex items-center justify-center">
+                        <Icon className="h-6 w-6 text-navy" />
                       </div>
                     </div>
                     <div className="flex-1">
-                      <h2 className="text-2xl font-bold text-white mb-4">
+                      <h2 className="text-2xl font-bold text-ink mb-4">
                         {section.title}
                       </h2>
-                      <div className="text-gray-300 leading-relaxed">
+                      <div className="text-ink-soft leading-relaxed">
                         {section.content}
                       </div>
                     </div>
@@ -169,22 +158,22 @@ const PrivacyPolicy = () => {
             })}
           </div>
 
-          <div className="mt-12 bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 p-8">
-            <h3 className="text-2xl font-bold text-white mb-6">Contact pour la protection des données</h3>
-            <p className="text-gray-300 mb-4">
+          <div className="mt-12 bg-white rounded-2xl border border-line p-8">
+            <h3 className="text-2xl font-bold text-ink mb-6">Contact pour la protection des données</h3>
+            <p className="text-ink-soft mb-4">
               Pour exercer vos droits ou poser des questions sur notre politique de confidentialité :
             </p>
-            <div className="space-y-2 text-gray-300">
+            <div className="space-y-2 text-ink-soft">
               <p><strong>Email :</strong> contact@kobinatech.com</p>
               <p><strong>Téléphone :</strong> +225 07 89 58 23 64</p>
               <p><strong>Adresse :</strong> 123 Rue de la Technologie, 75000 Paris, France</p>
             </div>
-            <p className="text-gray-400 mt-6 text-sm">
+            <p className="text-dim mt-6 text-sm">
               Nous nous engageons à répondre à votre demande dans un délai de 30 jours.
             </p>
           </div>
         </div>
-      </main>
+      </div>
     </div>
   );
 };

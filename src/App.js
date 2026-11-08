@@ -1,93 +1,77 @@
-import React from "react";
-import "./App.css";
-import { Routes, Route } from "react-router-dom";
-import { Toaster } from "./components/ui/toaster";
-import { AuthProvider } from "./context/AuthContext";
+import React, { lazy, Suspense } from 'react';
+import './App.css';
+import { Routes, Route, Navigate } from 'react-router-dom';
+import SiteLayout, { PageFallback } from './components/layout/SiteLayout';
+import HomeHero from './components/home/HomeHero';
+import Toolbox from './components/home/Toolbox';
+import Expertises from './components/home/Expertises';
+import Formules from './components/home/Formules';
+import Engagements from './components/home/Engagements';
+import ContactSection from './components/home/ContactSection';
 
-// Public pages
-import Navbar from "./components/Navbar";
-import Hero from "./components/Hero";
-import Stats from "./components/Stats";
-import Services from "./components/Services";
-import Difference from "./components/Difference";
-import Testimonials from "./components/Testimonials";
-import Industries from "./components/Industries";
-import DetailSections from "./components/DetailSections";
-import Process from "./components/Process";
-import FAQ from "./components/FAQ";
-import CTA from "./components/CTA";
-import Contact from "./components/Contact";
-import Footer from "./components/Footer";
-import CGV from "./components/CGV";
-import CGU from "./components/CGU";
-import PrivacyPolicy from "./components/PrivacyPolicy";
-import MentionsLegales from "./components/MentionsLegales";
-import About from "./components/About";
-import Blog from "./components/Blog";
-import Careers from "./components/Careers";
-import ContactPage from "./components/ContactPage";
-import WebinarIA from "./components/WebinarIA";
-import WebinarPopup from "./components/WebinarPopup";
+// Pages secondaires : chargées uniquement quand on les visite
+const About = lazy(() => import('./components/About'));
+const Blog = lazy(() => import('./components/Blog'));
+const Careers = lazy(() => import('./components/Careers'));
+const ContactPage = lazy(() => import('./components/ContactPage'));
+const WebinarIA = lazy(() => import('./components/WebinarIA'));
+const CGV = lazy(() => import('./components/CGV'));
+const CGU = lazy(() => import('./components/CGU'));
+const PrivacyPolicy = lazy(() => import('./components/PrivacyPolicy'));
+const MentionsLegales = lazy(() => import('./components/MentionsLegales'));
 
-// Admin
-import AdminLogin from "./components/admin/AdminLogin";
-import AdminLayout from "./components/admin/AdminLayout";
-import AdminDashboard from "./components/admin/AdminDashboard";
-import BlogList from "./components/admin/BlogList";
-import BlogEditor from "./components/admin/BlogEditor";
-import ContactList from "./components/admin/ContactList";
+// Administration : bundle séparé, jamais chargé par les visiteurs
+const AdminApp = lazy(() => import('./components/admin/AdminApp'));
 
 function HomePage() {
   return (
-    <div className="bg-[#0a0a1a]">
-      <Navbar />
-      <Hero />
-      <Stats />
-      <Services />
-      <Difference />
-      <Testimonials />
-      <Industries />
-      <DetailSections />
-      <Process />
-      <FAQ />
-      <CTA />
-      <Contact />
-      <Footer />
-      <Toaster />
-      <WebinarPopup />
-    </div>
+    <>
+      <HomeHero />
+      <Toolbox />
+      <Expertises />
+      <Formules />
+      <Engagements />
+      <ContactSection />
+    </>
+  );
+}
+
+function NotFound() {
+  return (
+    <section className="mx-auto flex min-h-[60vh] max-w-6xl flex-col items-start justify-center px-4 sm:px-6">
+      <p className="font-mono text-sm text-leaf">Erreur 404</p>
+      <h1 className="mt-3 font-display text-4xl font-bold text-ink md:text-6xl">Cette page n'existe pas.</h1>
+      <a href="/" className="mt-8 rounded-full bg-navy px-6 py-3 text-sm font-semibold text-white">Retour à l'accueil</a>
+    </section>
   );
 }
 
 function App() {
   return (
-    <AuthProvider>
-      <div className="App">
-        <Routes>
-          {/* Public */}
-          <Route path="/" element={<HomePage />} />
-          <Route path="/cgv" element={<CGV />} />
-          <Route path="/cgu" element={<CGU />} />
-          <Route path="/politique-de-confidentialite" element={<PrivacyPolicy />} />
-          <Route path="/mentions-legales" element={<MentionsLegales />} />
-          <Route path="/a-propos" element={<About />} />
-          <Route path="/blog" element={<Blog />} />
-          <Route path="/carrières" element={<Careers />} />
-          <Route path="/contact" element={<ContactPage />} />
-          <Route path="/webinar-ia" element={<WebinarIA />} />
-
-          {/* Admin */}
-          <Route path="/admin/login" element={<AdminLogin />} />
-          <Route path="/admin" element={<AdminLayout />}>
-            <Route index element={<AdminDashboard />} />
-            <Route path="blog" element={<BlogList />} />
-            <Route path="blog/new" element={<BlogEditor />} />
-            <Route path="blog/edit/:id" element={<BlogEditor />} />
-            <Route path="contacts" element={<ContactList />} />
-          </Route>
-        </Routes>
-      </div>
-    </AuthProvider>
+    <Routes>
+      <Route element={<SiteLayout />}>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/a-propos" element={<About />} />
+        <Route path="/blog" element={<Blog />} />
+        <Route path="/carrieres" element={<Careers />} />
+        <Route path="/carrières" element={<Navigate to="/carrieres" replace />} />
+        <Route path="/contact" element={<ContactPage />} />
+        <Route path="/webinar-ia" element={<WebinarIA />} />
+        <Route path="/cgv" element={<CGV />} />
+        <Route path="/cgu" element={<CGU />} />
+        <Route path="/politique-de-confidentialite" element={<PrivacyPolicy />} />
+        <Route path="/mentions-legales" element={<MentionsLegales />} />
+        <Route path="*" element={<NotFound />} />
+      </Route>
+      <Route
+        path="/admin/*"
+        element={
+          <Suspense fallback={<PageFallback />}>
+            <AdminApp />
+          </Suspense>
+        }
+      />
+    </Routes>
   );
 }
 

@@ -52,12 +52,19 @@ export async function markContactRead(id) {
   if (error) throw error;
 }
 
+const ALLOWED_IMAGES = { 'image/jpeg': 'jpg', 'image/png': 'png', 'image/webp': 'webp', 'image/gif': 'gif' };
+const MAX_IMAGE_BYTES = 3 * 1024 * 1024;
+
 export async function uploadPostImage(file) {
-  const ext = file.name.split('.').pop().toLowerCase();
-  const filename = `posts/${Date.now()}.${ext}`;
+  // Extension déduite du type MIME (jamais du nom de fichier) : bloque SVG/HTML déguisés
+  const ext = ALLOWED_IMAGES[file?.type];
+  if (!ext) throw new Error('Format non autorisé (JPG, PNG, WebP ou GIF uniquement).');
+  if (file.size > MAX_IMAGE_BYTES) throw new Error('Image trop lourde (3 Mo maximum).');
+  const random = Math.random().toString(36).slice(2, 10);
+  const filename = `posts/${Date.now()}-${random}.${ext}`;
   const { data, error } = await supabase.storage
     .from('blog-images')
-    .upload(filename, file, { upsert: true, contentType: file.type });
+    .upload(filename, file, { upsert: false, contentType: file.type, cacheControl: '31536000' });
   if (error) throw error;
   const { data: { publicUrl } } = supabase.storage
     .from('blog-images')

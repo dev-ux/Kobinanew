@@ -1,26 +1,15 @@
 import React from 'react';
-import { ArrowLeft } from 'lucide-react';
-import { Button } from './ui/button';
-import Navbar from './Navbar';
 
 const CGU = () => {
   return (
-    <div className="min-h-screen bg-[#0a0a1a] text-gray-300">
-      <main className="pt-24 pb-16">
-        <div className="container mx-auto px-4 max-w-4xl">
-          <Button
-            variant="ghost"
-            className="mb-6 text-gray-400 hover:text-white"
-            onClick={() => window.history.back()}
-          >
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Retour
-          </Button>
+    <div className="text-ink-soft">
+      <div className="py-14 md:py-20">
+        <div className="mx-auto max-w-3xl px-4 sm:px-6">
           
-          <h1 className="text-4xl font-bold text-white mb-2">Conditions Générales d'Utilisation</h1>
-          <p className="text-gray-400 mb-12">En vigueur au 24 juillet 2024</p>
+          <h1 className="font-display text-4xl md:text-5xl font-bold text-ink mb-2">Conditions Générales d'Utilisation</h1>
+          <p className="text-dim mb-12">En vigueur au 24 juillet 2024</p>
           
-          <div className="prose prose-invert max-w-none">
+          <div className="max-w-none">
             <section className="mb-12">
               <p className="mb-6">
                 Les présentes conditions générales d'utilisation (dites « CGU ») ont pour objet l'encadrement juridique des modalités de mise à disposition du site et des services par KobinaTech et de définir les conditions d'accès et d'utilisation des services par « l'Utilisateur ».
@@ -31,14 +20,14 @@ const CGU = () => {
             </section>
 
             <section className="mb-12">
-              <h2 className="text-2xl font-semibold mb-4 text-white">1. Accès au site</h2>
+              <h2 className="text-2xl font-semibold mb-4 text-ink">1. Accès au site</h2>
               <p>
                 Le site est accessible gratuitement en tout lieu à tout Utilisateur ayant un accès à Internet. Tous les frais supportés par l'Utilisateur pour accéder au service (matériel informatique, logiciels, connexion Internet, etc.) sont à sa charge.
               </p>
             </section>
 
             <section className="mb-12">
-              <h2 className="text-2xl font-semibold mb-4 text-white">2. Propriété intellectuelle</h2>
+              <h2 className="text-2xl font-semibold mb-4 text-ink">2. Propriété intellectuelle</h2>
               <p>
                 Les marques, logos, signes et tout autre contenu du site font l'objet d'une protection par le Code de la propriété intellectuelle et plus particulièrement par le droit d'auteur.
               </p>
@@ -51,7 +40,7 @@ const CGU = () => {
             </section>
 
             <section className="mb-12">
-              <h2 className="text-2xl font-semibold mb-4 text-white">3. Services fournis</h2>
+              <h2 className="text-2xl font-semibold mb-4 text-ink">3. Services fournis</h2>
               <p>
                 KobinaTech s'efforce de fournir sur le site des informations aussi précises que possible. Toutefois, il ne pourra être tenu responsable des omissions, des inexactitudes et des carences dans la mise à jour, qu'elles soient de son fait ou du fait des tiers partenaires qui lui fournissent ces informations.
               </p>
@@ -61,7 +50,7 @@ const CGU = () => {
             </section>
 
             <section className="mb-12">
-              <h2 className="text-2xl font-semibold mb-4 text-white">4. Responsabilité</h2>
+              <h2 className="text-2xl font-semibold mb-4 text-ink">4. Responsabilité</h2>
               <p>
                 Les sources des informations diffusées sur le site kobinatech.com sont réputées fiables mais le site ne garantit pas qu'il soit exempt de défauts, d'erreurs ou d'omissions.
               </p>
@@ -74,14 +63,14 @@ const CGU = () => {
             </section>
 
             <section className="mb-12">
-              <h2 className="text-2xl font-semibold mb-4 text-white">5. Liens hypertextes</h2>
+              <h2 className="text-2xl font-semibold mb-4 text-ink">5. Liens hypertextes</h2>
               <p>
                 Des liens hypertextes peuvent être présents sur le site. L'Utilisateur est informé qu'en cliquant sur ces liens, il sortira du site kobinatech.com. Ce dernier n'a pas de contrôle sur les pages web sur lesquelles aboutissent ces liens et ne saurait, en aucun cas, être responsable de leur contenu.
               </p>
             </section>
 
             <section className="mb-12">
-              <h2 className="text-2xl font-semibold mb-4 text-white">6. Droit applicable et juridiction compétente</h2>
+              <h2 className="text-2xl font-semibold mb-4 text-ink">6. Droit applicable et juridiction compétente</h2>
               <p>
                 La législation française s'applique au présent contrat. En cas d'absence de résolution amiable d'un litige né entre les parties, les tribunaux français seront seuls compétents pour en connaître.
               </p>
@@ -91,7 +80,7 @@ const CGU = () => {
             </section>
 
             <section className="mb-12">
-              <h2 className="text-2xl font-semibold mb-4 text-white">7. Données personnelles</h2>
+              <h2 className="text-2xl font-semibold mb-4 text-ink">7. Données personnelles</h2>
               <p>
                 KobinaTech est le seul destinataire des données personnelles collectées sur le site kobinatech.com. Ces informations concernent : le nom, le prénom, l'adresse électronique, le numéro de téléphone, l'adresse postale, etc.
               </p>
@@ -101,14 +90,14 @@ const CGU = () => {
             </section>
 
             <section className="mb-12">
-              <h2 className="text-2xl font-semibold mb-4 text-white">8. Droit applicable et juridiction compétente</h2>
+              <h2 className="text-2xl font-semibold mb-4 text-ink">8. Droit applicable et juridiction compétente</h2>
               <p>
                 Les présentes conditions d'utilisation du site sont régies par les lois françaises et toute contestation ou litige qui pourrait naître de l'interprétation ou de l'exécution de celles-ci seront de la compétence exclusive des tribunaux dont dépend le siège social de la société KobinaTech. La langue de référence, pour le règlement de contentieux éventuels, est le français.
               </p>
             </section>
 
             <section>
-              <h2 className="text-2xl font-semibold mb-4 text-white">9. Contact</h2>
+              <h2 className="text-2xl font-semibold mb-4 text-ink">9. Contact</h2>
               <p>
                 Pour tout renseignement complémentaire, vous pouvez nous contacter :
               </p>
@@ -120,7 +109,7 @@ const CGU = () => {
             </section>
           </div>
         </div>
-      </main>
+      </div>
     </div>
   );
 };

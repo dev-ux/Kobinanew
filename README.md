@@ -1,70 +1,31 @@
-# Getting Started with Create React App
+# KobinaTech — site vitrine
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Site de KobinaTech (React 19 + Create React App/CRACO + Tailwind), déployé sur Vercel.
 
-## Available Scripts
+## Scripts
 
-In the project directory, you can run:
+- `yarn start` : serveur de développement
+- `yarn build` : build de production (sans source maps, sans script inline pour la CSP)
 
-### `npm start`
+## Organisation
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+- `src/config/site.js` : coordonnées (email, téléphone, adresse, horaires) utilisées partout
+- `src/components/home/` : sections de la page d'accueil
+- `src/components/layout/` : en-tête, pied de page, mise en page commune
+- `src/components/admin/` : espace d'administration (chargé à la demande sous `/admin`)
+- `vercel.json` : réécritures SPA, en-têtes de sécurité (CSP, HSTS…) et cache
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## Variables d'environnement (Vercel → Settings → Environment Variables)
 
-### `npm test`
+| Nom | Contenu |
+| --- | --- |
+| `REACT_APP_SUPABASE_URL` | URL du projet Supabase |
+| `REACT_APP_SUPABASE` | Clé **publishable / anon** uniquement (jamais la clé `service_role` ou `secret`) |
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Toute variable `REACT_APP_*` est intégrée au JavaScript public : n'y mettez jamais de secret.
+La protection des données repose sur les règles RLS de Supabase.
 
-### `npm run build`
+## Contenus et images
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+N'utiliser que des textes, images et logos dont KobinaTech détient les droits.
+Ne jamais charger d'images directement depuis le site d'un tiers.
